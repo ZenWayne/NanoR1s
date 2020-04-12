@@ -1,0 +1,125 @@
+#=================================================
+# Description: NanoPi R1S-H5 OpenWrt 19.07 Autobuild
+# Lisence: MIT
+# Author: tjuyy
+#=================================================
+
+name: nano
+
+on:
+  release:
+    types: [published]
+  push:
+    branches:
+      - master
+    paths:
+      - "R1S-H5.diffconfig"
+  #  schedule:
+  #    - cron: 0 8 * * 5
+  watch:
+    types: [started]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Initialization environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          docker rmi `docker images -q`
+          sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
+          sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
+          sudo -E apt-get update
+          sudo -E apt-get clean
+          sudo wget -O - https://raw.githubusercontent.com/friendlyarm/build-env-on-ubuntu-bionic/master/install.sh | bash
+          sudo -E apt-get -y install bc
+          
+      - name: Clone Lean's OpenWrt source code
+        env:
+          REPO_URL: https://github.com/coolsnowwolf/lede
+          REPO_BRANCH: master
+        run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
+
+      - name: Clone Friendlyarm's OpenWrt source code
+        env:
+          BRANCH: master
+        run: |
+          git clone https://github.com/friendlyarm/repo
+          sudo cp repo/repo /usr/bin/
+          mkdir fwrt-h5
+          cd fwrt-h5
+          repo init -u https://github.com/friendlyarm/friendlywrt_manifests -b $BRANCH -m h5.xml --repo-url=https://github.com/friendlyarm/repo  --no-clone-bundle
+          repo sync -c --no-clone-bundle -j$(nproc)
+
+      - name: Merge Lean's OpenWrt source
+        run: |
+          cd fwrt-h5/fwrt
+          # sudo mkdir -p -m 777 /mnt/openwrt/bin /mnt/openwrt/build_dir/host /mnt/openwrt/build_dir/hostpkg /mnt/openwrt/dl /mnt/openwrt/feeds /mnt/openwrt/staging_dir
+          # ln -s /mnt/openwrt/bin ./bin
+          # mkdir -p ./build_dir/host && ln -s /mnt/openwrt/build_dir/host ./build_dir/host
+          # mkdir -p ./build_dir/host && ln -s /mnt/openwrt/build_dir/hostpkg ./build_dir/hostpkg
+          # ln -s /mnt/openwrt/dl ./dl
+          # ln -s /mnt/openwrt/feeds ./feeds
+          # ln -s /mnt/openwrt/staging_dir ./staging_dir               
+          cp -r ../../lede/package/lean package/
+          cp -r ../../lede/tools/upx ./tools
+          cp -r ../../lede/tools/ucl ./tools
+          sed --in-place 's/tools-y += mtools dosfstools libressl/tools-y += mtools dosfstools libressl upx ucl/' ./tools/Makefile
+          sed --in-place 's/# builddir dependencies/$(curdir)\/upx\/compile := $(curdir)\/ucl\/compile/' ./tools/Makefile
+          cp -r ../../lede/package/libs/librpc package/libs/
+          cp -f ../../lede/feeds.conf.default ./feeds.conf.default 
+
+      - name: Update and install feeds
+        run: |
+          cd fwrt-h5/fwrt
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: Load custom configuration
+        env:
+          CONFIG_FILE: "R1S-H5.diffconfig"
+        run: |
+          [ -e $CONFIG_FILE ] && mv $CONFIG_FILE fwrt-h5/fwrt/.config
+          cd fwrt-h5/fwrt
+          make defconfig
+          
+      - name: Download package
+        if: always()
+        run: |
+          cd fwrt-h5/fwrt
+          make download -j8
+          find dl -size -1024c -exec ls -l {} \;
+          find dl -size -1024c -exec rm -f {} \;
+          
+      - name: Build
+        if: always()
+        run: |
+          cd fwrt-h5
+          # sed --in-place 's/make -j$(nproc) V=s/make -j1 V=s/' ./scripts/mk-friendlywrt.sh
+          echo "Start building..."
+          ./build.sh nanopi_r1s.mk
+
+      - name: Zip Files
+        if: always()
+        run: |
+          find fwrt-h5/out/ -name "FriendlyWrt_*img*" | xargs -i zip -r {}.zip {}
+          
+      - name: Assemble Artifact
+        if: always()
+        run: |
+          rm -rf ./artifact/
+          mkdir -p ./artifact/
+          find fwrt-h5/out/ -name "FriendlyWrt_*img.zip*" | xargs -i mv -f {} ./artifact/
+          
+      - name: Upload Artifact
+        if: always()
+        uses: actions/upload-artifact@master
+        with:
+          name: FriendlyWrt_NanoPi-R1S
+          path: ./artifact/
+          
