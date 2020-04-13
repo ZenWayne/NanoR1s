@@ -55,6 +55,7 @@ jobs:
           cd fwrt-h5
           repo init -u https://github.com/friendlyarm/friendlywrt_manifests -b $BRANCH -m h5.xml --repo-url=https://github.com/friendlyarm/repo  --no-clone-bundle
           repo sync -c --no-clone-bundle -j$(nproc)
+          mv friendlywrt fwrt
 
       - name: Merge Lean's OpenWrt source
         run: |
