@@ -3,11 +3,10 @@
 
 ## Usage
 
-1. Fork this repository
-2. Modified R1S-H5.diffconfig to add some package if necessary 
-3. Click the `Star` button of your own forked repository or `Create a new release` in your forked repository 
-4. Github Actions workflow will be triggered and run automaticlly
-5. Wait completion of the workflow and download files from `Aritifact`
+1. Fork 这个 repo
+2. 根据自己需求改R1S-H5.diffconfig
+3. `Star`你自己fork的项目
+4. Github Actions完成后,从Aritifact下载压缩文件解压并flash
 
 ## Info
 

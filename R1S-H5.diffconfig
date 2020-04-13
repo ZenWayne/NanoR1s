@@ -53,6 +53,8 @@ CONFIG_TARGET_ROOTFS_PARTSIZE=512
 
 # CONFIG_PACKAGE_dnsmasq is not set
 CONFIG_PACKAGE_dnsmasq-full=y
+# 这里往上尽量不用改，如果你不知道你在做什么
+# 比如，如果外接usb无线网卡要另外加入模块
 
 CONFIG_PACKAGE_luci=y
 CONFIG_PACKAGE_luci-app-openvpn=y
@@ -65,24 +67,24 @@ CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray=y
 CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Trojan=y
 CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun=y
 CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Socks=y
-# The above is the default config try not to modified it
+# 以上是默认配置
 
 # 以下为可选配置
 # Addition option
-CONFIG_PACKAGE_luci-app-adbyby-plus=y
-CONFIG_PACKAGE_luci-app-aria2=y
-CONFIG_PACKAGE_luci-app-flowoffload=y
-CONFIG_PACKAGE_luci-app-baidupcs-web=y
-CONFIG_PACKAGE_luci-app-verysync=y
-CONFIG_PACKAGE_luci-app-vlmcsd=y
-CONFIG_PACKAGE_luci-app-wol=y
+# CONFIG_PACKAGE_luci-app-adbyby-plus is not set
+# CONFIG_PACKAGE_luci-app-aria2 is not set
+# CONFIG_PACKAGE_luci-app-flowoffload is not set
+# CONFIG_PACKAGE_luci-app-baidupcs-web is not set
+# CONFIG_PACKAGE_luci-app-verysync is not set
+# CONFIG_PACKAGE_luci-app-vlmcsd is not set
+# CONFIG_PACKAGE_luci-app-wol is not set
 
-CONFIG_PACKAGE_python3=y
-CONFIG_PACKAGE_bash=y
-CONFIG_PACKAGE_tcpdump=y
+# CONFIG_PACKAGE_python3 is not set
+# CONFIG_PACKAGE_bash is not set
+# CONFIG_PACKAGE_tcpdump is not set
 
 # unblockmusic需加入wget依赖
-CONFIG_PACKAGE_wget=y
-CONFIG_PACKAGE_luci-app-unblockmusic=y
+# CONFIG_PACKAGE_wget is not set
+# CONFIG_PACKAGE_luci-app-unblockmusic is not set
 
-CONFIG_PACKAGE_bash=y
+# CONFIG_PACKAGE_bash is not set
