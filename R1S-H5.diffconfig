@@ -84,6 +84,7 @@ CONFIG_PACKAGE_python3=y
 CONFIG_PACKAGE_python3-pip=y
 CONFIG_PACKAGE_bash=y
 CONFIG_PACKAGE_tcpdump=y
+CONFIG_PACKAGE_vim-fuller=y
 
 # unblockmusic需加入wget依赖
 CONFIG_PACKAGE_wget=y
