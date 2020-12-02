@@ -71,7 +71,7 @@ jobs:
           cp -r ../../lede/tools/ucl ./tools
           sed --in-place 's/tools-y += mtools dosfstools libressl/tools-y += mtools dosfstools libressl upx ucl/' ./tools/Makefile
           sed --in-place 's/# builddir dependencies/$(curdir)\/upx\/compile := $(curdir)\/ucl\/compile/' ./tools/Makefile
-          cp -r ../../lede/package/libs/librpc package/libs/
+          #cp -r ../../lede/package/libs/librpc package/libs/
           cp -f ../../lede/feeds.conf.default ./feeds.conf.default 
 
       - name: Update and install feeds
