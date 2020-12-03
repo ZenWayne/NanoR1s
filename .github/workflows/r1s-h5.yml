@@ -72,6 +72,7 @@ jobs:
           sed --in-place 's/tools-y += mtools dosfstools libressl/tools-y += mtools dosfstools libressl upx ucl/' ./tools/Makefile
           sed --in-place 's/# builddir dependencies/$(curdir)\/upx\/compile := $(curdir)\/ucl\/compile/' ./tools/Makefile
           cp -r ../../lede/package/libs/pcre package/libs/
+          cp -r ../../lede/package/libs/nghttp2 package/libs/
           cp -r ../../lede/package/system/ca-certificates package/system/
           cp -f ../../lede/feeds.conf.default ./feeds.conf.default 
 
